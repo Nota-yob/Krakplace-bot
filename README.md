@@ -1,5 +1,5 @@
 # Krakplace bot
-This program permits to automatically draw an image on the KrakPlace canva using their API.
+This program permits to automatically draw an image on the KrakPlace canva using their API. <br>
 Author :  Yoann Balasse
 
 ## Front end
