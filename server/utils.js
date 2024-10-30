@@ -92,7 +92,6 @@ async function drawImage(imageData, startX, startY, cookies) {
             }
         }
     }
-    return {message : "Image has been drawn successfully"};
 }
 
 async function drawPixel(payload, cookie) {

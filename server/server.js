@@ -36,7 +36,7 @@ app.post("/proxy/task", async (req, res) => {
     }
     utils.drawImage(imageData, startX, startY, cookies)
     .then((message)=> {
-        console.log(message);
+        console.log("Image has been drawn successfully");
     })
     .catch((error)=> {
         console.error("Fatal error drawing the image :", error);
