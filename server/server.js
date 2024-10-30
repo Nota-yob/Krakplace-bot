@@ -22,34 +22,6 @@ app.use(express.static("public"));
 app.get("/", (req, res) => {
     res.sendFile(path.join(__dirname, "index.html"));
 });
-/*
-// Define the proxy endpoint
-app.post("/proxy/draw", async (req, res) => {
-    const { x, y, color, cookie } = req.body;
-    try {
-        // Proxy the request to the external API
-        const response = await fetch("https://place.liste.bdekraken.fr/api/place/tile/draw", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "Cookie": `krakookie=${cookie}`
-            },
-            body: JSON.stringify({ x, y, color })
-        });
-
-        const data = await response.json();
-
-        if (response.ok) {
-            res.status(200).json(data); // Send the response back to the client
-        } else {
-            res.status(response.status).json(data); // Forward error status and response
-        }
-    } catch (error) {
-        console.error("Error proxying request:", error);
-        res.status(500).json({ error: "Internal Server Error" });
-    }
-});
-*/
 
 app.post("/proxy/task", async (req, res) => {
     const {startX, startY, imageData} = req.body;

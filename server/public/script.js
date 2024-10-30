@@ -25,7 +25,8 @@ function getClosestColor(color) {
 }
 
 // Function to process the image and convert to color data array
-function processImage() {
+function processImage(callback) {
+    
     const input = document.getElementById("imageInput").files[0];
     const startX = document.getElementById("startX");
     const startY = document.getElementById("startY");
@@ -54,7 +55,8 @@ function processImage() {
         }
 
         // Create a canvas with the new dimensions
-        const canvas = document.createElement("canvas");
+        //const canvas = document.createElement("canvas");
+        const canvas = document.getElementById("previewCanvas");
         canvas.width = width;
         canvas.height = height;
         const ctx = canvas.getContext("2d");
@@ -89,14 +91,32 @@ function processImage() {
             }
             imageData.push(row);
         }
-        console.log(imageData);
+        //console.log(imageData);
         //drawBitmap(imageData, startXValue, startYValue, cookieValue);
-        sendToServer(imageData, startXValue, startYValue);
+        //sendToServer(imageData, startXValue, startYValue);
+        previewImage(imageData, canvas);
+        // Call the callback function with the processed data
+        if (callback) callback(imageData, startXValue, startYValue);
     };
 }
+function previewImage(imageData, canvas) {
+    const ctx = canvas.getContext('2d');
+    const pixelSize = 10; // Adjust pixel size for zoom effect
+
+    for (let y = 0; y < imageData.length; y++) {
+        for (let x = 0; x < imageData[y].length; x++) {
+            const color = imageData[y][x];
+            if (color) {
+                ctx.fillStyle = color;
+                ctx.fillRect(x * pixelSize, y * pixelSize, pixelSize, pixelSize);
+            }
+        }
+    }
+}
+
 
 async function sendToServer(imageData, startX, startY) {
-    console.log("coucou");
+    console.log("sent to server");
     const payload = JSON.stringify({ startX: startX, startY:startY, imageData: imageData });
     
     try {
@@ -121,49 +141,10 @@ async function sendToServer(imageData, startX, startY) {
         console.error(`Failed to send the image to the bot. Error :`, error);
     }
 }
-/*
-// Draw function with cookie and success check
-async function drawBitmap(imageData, startX, startY, cookie) {
-    // Loop through the image data
-    for (let y = 0; y < imageData.length; y++) {
-        for (let x = 0; x < imageData[y].length; x++) {
-            const color = imageData[y][x];
-            const posX = startX + x;
-            const posY = startY + y;
 
-            if (color == null) continue;
-
-            // Prepare payload
-            const payload = JSON.stringify({ x: posX, y: posY, color: color, cookie: cookie });
-            
-            try {
-                // Send POST request
-                const response = await fetch("http://localhost:8080/proxy/draw", {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
-                    body: payload
-                });
-
-                const result = await response.json();
-
-                // Check if successful
-                if (result.success) {
-                    console.log(`Placed pixel at (${posX}, ${posY}) with color ${color}`);
-                } else {
-                    console.error(`Failed to place pixel at (${posX}, ${posY}):`, result);
-                }
-            } catch (error) {
-                console.error(`Failed to place pixel at (${posX}, ${posY}):`, error);
-            }
-
-            // Random delay between 10 to 20 seconds
-            const delay = Math.floor(Math.random() * 10 + 10) * 1000;
-            console.log(`Delay : ${delay} ms`);
-            await new Promise(resolve => setTimeout(resolve, delay));
-        }
-    }
+// Updated submitTask to use a callback
+function submitTask() {
+    processImage((imageData, startXValue, startYValue) => {
+        sendToServer(imageData, startXValue, startYValue);
+    });
 }
-
-*/

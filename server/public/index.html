@@ -4,20 +4,29 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bitmap to Pixel Drawer</title>
+    <script src="script.js" defer></script>
 </head>
 <body>
-    <label for="imageInput">Choose the image to draw</label>
+    <label for="imageInput">Choose the image to draw:</label>
     <input type="file" id="imageInput" accept="image/*"> <br>
-    <label for="startX">Start X coordinate :</label>
+    
+    <label for="startX">Start X coordinate:</label>
     <input type="text" name="startX" id="startX"><br>
-    <label for="startY">Start Y coordinate :</label>
+    
+    <label for="startY">Start Y coordinate:</label>
     <input type="text" name="startY" id="startY"><br>
-    <label for="sizeX">Size X :</label>
+    
+    <label for="sizeX">Size X:</label>
     <input type="text" name="sizeX" id="sizeX"><br>
-    <label for="sizeY">Size Y :</label>
+    
+    <label for="sizeY">Size Y:</label>
     <input type="text" name="sizeY" id="sizeY"><br>
-    <button onclick="processImage()">Process and Draw Image</button>
-
-    <script src="script.js"></script>
+    
+    <button onclick="processImage()">Preview</button>
+    <br><br><br>
+    
+    <button onclick="submitTask()">Process and Draw Image</button>
+    
+    <canvas id="previewCanvas"></canvas>
 </body>
 </html>

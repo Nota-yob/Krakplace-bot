@@ -22,7 +22,7 @@ async function getCookies() {
 const fetch = require('node-fetch');
 
 async function drawImage(imageData, startX, startY, cookies) {
-    const MAX_FAIL = 5; // Max retries per pixel
+    const MAX_FAIL = 10; // Max retries per pixel
     const cooldown = (10 * 1000) / cookies.length; // Cooldown in milliseconds
     let cookieIndex = 0;
     // Function to introduce a delay
@@ -45,7 +45,7 @@ async function drawImage(imageData, startX, startY, cookies) {
                 body = await result.json();
                 const tile = posX + posY * 255;
                 // Check for conditions to skip the iteration
-                if (!result.ok && result.status === 404 && body.message === "Tile not found") {
+                if (result.status === 404 && body.message === "Tile not found" && color == "#ffffff") {
                     console.log(`Skipping pixel at (${posX}, ${posY}) : tile ${tile} not found`);
                     continue; // Skip if tile not found
                 }
@@ -92,6 +92,7 @@ async function drawImage(imageData, startX, startY, cookies) {
             }
         }
     }
+    return {message : "Image has been drawn successfully"};
 }
 
 async function drawPixel(payload, cookie) {
