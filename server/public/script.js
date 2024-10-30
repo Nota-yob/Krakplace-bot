@@ -5,9 +5,6 @@ const colorPalette = [
     "#811e9f", "#b44ac0", "#e4abff", "#de107f", "#ff3881", "#ff99aa", "#6d482f", "#9c6926", "#ffb470",
     "#000000", "#515252", "#898d90", "#d4d7d9", "#ffffff"
 ];
-// Maximum width and height for the image
-const maxWidth = 40;  // Adjust based on your requirements
-const maxHeight = 40; // Adjust based on your requirements
 
 // Utility function to find closest color in the palette
 function getClosestColor(color) {
@@ -30,27 +27,29 @@ function getClosestColor(color) {
 // Function to process the image and convert to color data array
 function processImage() {
     const input = document.getElementById("imageInput").files[0];
-    const cookie = document.getElementById("cookie");
     const startX = document.getElementById("startX");
     const startY = document.getElementById("startY");
-    if (!input || !cookie || !startX || !startY ) return;
-    const cookieValue = cookie.value;
+    const sizeX = document.getElementById("sizeX");
+    const sizeY = document.getElementById("sizeY");
+    if (!input || !startX || !startY || !sizeX || !sizeY) return;
     const startXValue = parseInt(startX.value);
     const startYValue = parseInt(startY.value);
+    const sizeXValue = parseInt(sizeX.value);
+    const sizeYValue = parseInt(sizeY.value);
 
     const img = new Image();
     img.src = URL.createObjectURL(input);
     img.onload = () => {
         // Calculate scaled dimensions if the image is too large
         let { width, height } = img;
-        if (width > maxWidth || height > maxHeight) {
+        if (width > sizeYValue || height > sizeXValue) {
             const aspectRatio = width / height;
             if (width > height) {
-                width = maxWidth;
-                height = maxWidth / aspectRatio;
+                width = sizeYValue;
+                height = sizeYValue / aspectRatio;
             } else {
-                height = maxHeight;
-                width = maxHeight * aspectRatio;
+                height = sizeXValue;
+                width = sizeXValue * aspectRatio;
             }
         }
 
@@ -90,11 +89,39 @@ function processImage() {
             }
             imageData.push(row);
         }
-
-        drawBitmap(imageData, startXValue, startYValue, cookieValue);
+        console.log(imageData);
+        //drawBitmap(imageData, startXValue, startYValue, cookieValue);
+        sendToServer(imageData, startXValue, startYValue);
     };
 }
 
+async function sendToServer(imageData, startX, startY) {
+    console.log("coucou");
+    const payload = JSON.stringify({ startX: startX, startY:startY, imageData: imageData });
+    
+    try {
+        // Send POST request
+        const response = await fetch("http://localhost:8080/proxy/task", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: payload
+        });
+
+        const result = await response.json();
+
+        // Check if successful
+        if (result.status == 200) {
+            console.log(result.message);
+        }else {
+            console.error(result.message);
+        }
+    } catch (error) {
+        console.error(`Failed to send the image to the bot. Error :`, error);
+    }
+}
+/*
 // Draw function with cookie and success check
 async function drawBitmap(imageData, startX, startY, cookie) {
     // Loop through the image data
@@ -118,16 +145,7 @@ async function drawBitmap(imageData, startX, startY, cookie) {
                     },
                     body: payload
                 });
-                /*
-                const response = await fetch("https://place.liste.bdekraken.fr/api/place/tile/draw", {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                        "Cookie": `krakookie=${cookie}`
-                    },
-                    body: payload
-                });
-                */
+
                 const result = await response.json();
 
                 // Check if successful
@@ -147,3 +165,5 @@ async function drawBitmap(imageData, startX, startY, cookie) {
         }
     }
 }
+
+*/

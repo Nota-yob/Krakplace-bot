@@ -9,7 +9,7 @@ COPY package.json .
 RUN npm install
 
 # Copy the rest of the application files
-COPY . .
+COPY ../ .
 
 # Expose the server's port
 EXPOSE 8080
